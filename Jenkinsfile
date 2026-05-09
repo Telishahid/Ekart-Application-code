@@ -32,7 +32,7 @@ pipeline {
 
         stage('SonarQube analysis') {
             steps {
-                withSonarQubeEnv('sonar-scanner') {
+                withSonarQubeEnv('sonar') {
                     sh "${env.SCANNER_HOME}/bin/sonar-scanner \
                         -Dsonar.projectKey=EKART \
                         -Dsonar.projectName=EKART \
@@ -76,8 +76,8 @@ pipeline {
         stage('Push image to Hub'){
             steps{
                 script{
-                   withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
-                   sh 'docker login -u shahidteli -p ${dockerhubpwd}'}
+                   withCredentials([string(credentialsId: 'shahidteli', variable: 'shahidteli')]) {
+                   sh 'docker login -u shahidteli -p ${shahidteli}'}
                    sh 'docker push shahidteli/ekart:latest'
                 }
             }
