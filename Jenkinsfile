@@ -85,7 +85,7 @@ pipeline {
         stage('EKS and Kubectl configuration'){
             steps{
                 script{
-                    sh 'aws eks update-kubeconfig --region ap-south-1 --name project-cluster'
+                    sh 'aws eks update-kubeconfig --region us-west-2 --name shahid-cluster'
                 }
             }
         }
