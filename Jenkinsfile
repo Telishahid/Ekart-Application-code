@@ -89,6 +89,20 @@ pipeline {
                 }
             }
         }
+
+        stage('Debug Jenkins Auth') {
+            steps {
+                sh '''
+                whoami
+                echo "HOME=$HOME"
+                aws sts get-caller-identity
+                ls -la /var/lib/jenkins/.kube/
+                export KUBECONFIG=/var/lib/jenkins/.kube/config
+                kubectl config current-context
+                kubectl get nodes
+                '''
+                }
+            }
         stage('Deploy to k8s'){
             steps{
                 script{
