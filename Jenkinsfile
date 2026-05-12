@@ -73,15 +73,17 @@ pipeline {
             }
         }
 
-        stage('Push image to Hub'){
-            steps{
-                script{
-                   withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
-                   sh 'docker login -u shahidteli -p ${dockerhubpwd}'}
-                   sh 'docker push shahidteli/ekart:latest'
+        stage('Push image to Hub') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
+                    sh 'docker login -u shahidteli -p ${dockerhubpwd}'
+                    }
+                    sh 'docker push shahidteli/ekart:latest'
                 }
             }
         }
+
         stage('Verify Auth') {
             steps {
                 sh '''
@@ -94,26 +96,29 @@ pipeline {
                 kubectl config current-context
 
                 echo "===== Token Test ====="
-                aws eks get-token --region us-west-2 --cluster-name shahid-cluster > /tmp/token.json
-                cat /tmp/token.json | head
+                aws eks get-token --region us-west-2 --cluster-name shahid-cluster
 
                 echo "===== Cluster Access ====="
                 kubectl get nodes
                 '''
             }
         }
-        stage('EKS and Kubectl configuration'){
-            steps{
-                script{
-                    sh 'aws eks update-kubeconfig --region us-west-2 --name shahid-cluster'
-                }
+
+        stage('EKS and Kubectl configuration') {
+            steps {
+                sh '''
+                export KUBECONFIG=/var/lib/jenkins/.kube/config
+                aws eks update-kubeconfig --region us-west-2 --name shahid-cluster
+                '''
             }
         }
-        stage('Deploy to k8s'){
-            steps{
-                script{
-                    sh 'kubectl apply -f deploymentservice.yml'
-                }
+
+        stage('Deploy to k8s') {
+            steps {
+                sh '''
+                export KUBECONFIG=/var/lib/jenkins/.kube/config
+                kubectl apply -f deploymentservice.yml
+                '''
             }
         }
     }
