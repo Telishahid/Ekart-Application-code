@@ -90,19 +90,26 @@ pipeline {
             }
         }
 
-        stage('Debug Jenkins Auth') {
+        stage('Verify Auth') {
             steps {
                 sh '''
-                whoami
-                echo "HOME=$HOME"
-                aws sts get-caller-identity
-                ls -la /var/lib/jenkins/.kube/
                 export KUBECONFIG=/var/lib/jenkins/.kube/config
+
+                echo "===== AWS Identity ====="
+                aws sts get-caller-identity
+
+                echo "===== Kube Context ====="
                 kubectl config current-context
+
+                echo "===== Token Test ====="
+                aws eks get-token --region us-west-2 --cluster-name shahid-cluster > /tmp/token.json
+                cat /tmp/token.json | head
+
+                echo "===== Cluster Access ====="
                 kubectl get nodes
                 '''
-                }
             }
+        }
         stage('Deploy to k8s'){
             steps{
                 script{
