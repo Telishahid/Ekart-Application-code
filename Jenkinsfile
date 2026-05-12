@@ -84,26 +84,6 @@ pipeline {
             }
         }
 
-        stage('Verify Auth') {
-            steps {
-                sh '''
-                export KUBECONFIG=/var/lib/jenkins/.kube/config
-
-                echo "===== AWS Identity ====="
-                aws sts get-caller-identity
-
-                echo "===== Kube Context ====="
-                kubectl config current-context
-
-                echo "===== Token Test ====="
-                aws eks get-token --region us-west-2 --cluster-name shahid-cluster
-
-                echo "===== Cluster Access ====="
-                kubectl get nodes
-                '''
-            }
-        }
-
         stage('EKS and Kubectl configuration') {
             steps {
                 sh '''
