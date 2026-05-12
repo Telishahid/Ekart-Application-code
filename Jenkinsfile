@@ -82,14 +82,6 @@ pipeline {
                 }
             }
         }
-        stage('EKS and Kubectl configuration'){
-            steps{
-                script{
-                    sh 'aws eks update-kubeconfig --region us-west-2 --name shahid-cluster'
-                }
-            }
-        }
-
         stage('Verify Auth') {
             steps {
                 sh '''
@@ -108,6 +100,13 @@ pipeline {
                 echo "===== Cluster Access ====="
                 kubectl get nodes
                 '''
+            }
+        }
+        stage('EKS and Kubectl configuration'){
+            steps{
+                script{
+                    sh 'aws eks update-kubeconfig --region us-west-2 --name shahid-cluster'
+                }
             }
         }
         stage('Deploy to k8s'){
